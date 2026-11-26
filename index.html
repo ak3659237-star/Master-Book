@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Master Book • 3D Satellite Mall & Autopilot</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
@@ -10,40 +9,31 @@
     body { margin: 0; background: #020617; color: #f8fafc; padding: 8px; }
     .box { max-width: 520px; margin: 0 auto; }
     button { width: 100%; border: none; border-radius: 12px; padding: 10px; font-weight: 800; color: #fff; cursor: pointer; background: #0284c7; }
-    input, textarea { width: 100%; padding: 9px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: #fff; margin-top: 6px; }
+    input { width: 100%; padding: 9px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: #fff; margin-top: 6px; }
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
   </style>
 </head>
 <body>
   <div class="box">
-    <div id="mapStage" style="position:relative;width:100%;height:75vh;min-height:480px;border-radius:18px;overflow:hidden;border:2.5px solid #38bdf8;background:#e2e8f0;">
-      <div id="realSatMap" style="width:100%;height:57%;z-index:1;"></div>
-
-      <!-- Google Maps স্টাইল সার্চ বার ও একেবারে ডানদিকে Gmail প্রোফাইল -->
+    <div id="mapStage" style="position:relative;width:100%;height:74vh;min-height:470px;border-radius:18px;overflow:hidden;border:2.5px solid #38bdf8;background:#e2e8f0;">
+      <div id="realSatMap" style="width:100%;height:60%;z-index:1;"></div>
       <div id="topSearchBar" style="position:absolute;top:10px;left:10px;right:10px;z-index:500;display:flex;align-items:center;background:#fff;border-radius:28px;padding:4px 6px 4px 12px;box-shadow:0 4px 14px rgba(0,0,0,0.28);">
         <span style="font-size:16px;margin-right:6px;">📍</span>
-        <input id="qBox" onkeydown="if(event.key==='Enter') askMapAssistant()" placeholder="Search here (মল, দোকান বা পণ্য)..." style="background:transparent;color:#0f172a;border:none;outline:none;margin:0;padding:6px 4px;font-size:13px;font-weight:600;">
+        <input id="qBox" onkeydown="if(event.key==='Enter') askMapAssistant()" placeholder="Search বা বলুন (গাড়ি, মিষ্টি, কুর্তা)..." style="background:transparent;color:#0f172a;border:none;outline:none;margin:0;padding:6px 4px;font-size:13px;font-weight:600;">
         <button onclick="askMapAssistant()" style="width:auto;background:transparent;color:#475569;padding:4px 8px;font-size:15px;">🔍</button>
         <div id="profileSlot"></div>
       </div>
-
-      <!-- প্রোফাইলের নিচে ডানদিকে ভাসমান স্যাটেলাইট বাটন -->
       <button id="satBtn" onclick="toggleLayer()" style="position:absolute;top:64px;right:12px;z-index:500;width:40px;height:40px;border-radius:50%;padding:0;background:#e0f2fe;color:#0369a1;border:2px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,0.3);font-size:16px;">🛰️</button>
-
-      <!-- বামদিকে 3D মল ইন্টেরিয়র প্রিভিউ থাম্বনেইল -->
-      <div id="mall3dThumb" onclick="enter3DRoom(activeShop)" style="position:absolute;top:41%;left:12px;z-index:500;width:84px;height:56px;border-radius:12px;border:2.5px solid #fff;overflow:hidden;box-shadow:0 6px 15px rgba(0,0,0,0.45);cursor:pointer;background:#000;">
+      <div onclick="enter3DRoom(activeShop)" style="position:absolute;top:44%;left:12px;z-index:500;width:84px;height:54px;border-radius:12px;border:2.5px solid #fff;overflow:hidden;box-shadow:0 6px 15px rgba(0,0,0,0.45);cursor:pointer;background:#000;">
         <img id="thumbImg" src="https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=400&q=80" style="width:100%;height:100%;object-fit:cover;">
         <span style="position:absolute;bottom:2px;left:4px;background:rgba(0,0,0,0.75);color:#fde047;font-size:9px;padding:1px 5px;border-radius:6px;font-weight:800;">🔄 3D ভেতর</span>
       </div>
-
-      <!-- নিচের সাদা কার্ডে মল ও ভেতরের দোকান লিস্ট -->
-      <div id="bottomSheet" style="position:absolute;bottom:0;left:0;right:0;height:45%;background:#fff;color:#0f172a;border-radius:22px 22px 0 0;padding:10px 14px;z-index:600;box-shadow:0 -6px 20px rgba(0,0,0,0.25);overflow-y:auto;"></div>
+      <div id="bottomSheet" style="position:absolute;bottom:0;left:0;right:0;height:42%;background:#fff;color:#0f172a;border-radius:22px 22px 0 0;padding:10px 14px;z-index:600;box-shadow:0 -6px 20px rgba(0,0,0,0.25);overflow-y:auto;"></div>
     </div>
-
     <div style="background:#0f172a;border:1.5px solid #38bdf8;border-radius:16px;padding:12px;margin-top:10px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <b style="color:#fde047;font-size:14px;">📒 Master Book • অষ্টাবক্র অটোপাইলট</b>
-        <span style="background:#16a34a;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:800;">3D MALL LIVE</span>
+        <span style="background:#16a34a;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:800;">ALL-IN-ONE LIVE</span>
       </div>
       <div class="grid2">
         <button onclick="openAutoKhata()" style="background:linear-gradient(135deg,#059669,#0284c7);">📒 অটো খাতা + রিওয়ার্ড</button>
@@ -60,6 +50,8 @@
   <script src="affiliate_paste.js"></script>
   <script src="gmail_auth.js"></script>
   <script src="reverse_power.js"></script>
+  <script src="ride_booking.js"></script>
+  <script src="ai_brain.js"></script>
   <script src="admin_autopilot.js"></script>
 </body>
 </html>
