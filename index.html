@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Master Book • Ashtavakra Map Assistant & Auto-Khata</title>
+  <title>Master Book • 3D Satellite Mall & Autopilot</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
     * { box-sizing: border-box; font-family: system-ui, sans-serif; }
@@ -16,26 +16,40 @@
 </head>
 <body>
   <div class="box">
-    <div id="mapStage" style="position:relative;width:100%;height:73vh;min-height:460px;border-radius:18px;overflow:hidden;border:2.5px solid #38bdf8;background:#e2e8f0;">
-      <div id="realSatMap" style="width:100%;height:58%;z-index:1;"></div>
-      <div style="position:absolute;top:10px;left:10px;right:10px;z-index:500;display:flex;gap:5px;">
-        <input id="qBox" onkeydown="if(event.key==='Enter') askMapAssistant()" placeholder="🤖 অ্যাসিস্ট্যান্ট ম্যাপ: যা লাগবে লিখুন..." style="background:#fff;color:#0f172a;border-radius:20px;margin:0;box-shadow:0 4px 12px rgba(0,0,0,0.3);font-size:12px;">
-        <button onclick="askMapAssistant()" style="width:auto;padding:8px 11px;border-radius:20px;background:#16a34a;font-size:11px;">🔍</button>
-        <button id="satBtn" onclick="toggleLayer()" style="width:auto;padding:8px 11px;border-radius:20px;background:#0f172a;font-size:11px;">🛰️</button>
+    <div id="mapStage" style="position:relative;width:100%;height:75vh;min-height:480px;border-radius:18px;overflow:hidden;border:2.5px solid #38bdf8;background:#e2e8f0;">
+      <div id="realSatMap" style="width:100%;height:57%;z-index:1;"></div>
+
+      <!-- Google Maps স্টাইল সার্চ বার ও একেবারে ডানদিকে Gmail প্রোফাইল -->
+      <div id="topSearchBar" style="position:absolute;top:10px;left:10px;right:10px;z-index:500;display:flex;align-items:center;background:#fff;border-radius:28px;padding:4px 6px 4px 12px;box-shadow:0 4px 14px rgba(0,0,0,0.28);">
+        <span style="font-size:16px;margin-right:6px;">📍</span>
+        <input id="qBox" onkeydown="if(event.key==='Enter') askMapAssistant()" placeholder="Search here (মল, দোকান বা পণ্য)..." style="background:transparent;color:#0f172a;border:none;outline:none;margin:0;padding:6px 4px;font-size:13px;font-weight:600;">
+        <button onclick="askMapAssistant()" style="width:auto;background:transparent;color:#475569;padding:4px 8px;font-size:15px;">🔍</button>
+        <div id="profileSlot"></div>
       </div>
-      <div id="bottomSheet" style="position:absolute;bottom:0;left:0;right:0;height:44%;background:#fff;color:#0f172a;border-radius:22px 22px 0 0;padding:12px 14px;z-index:600;box-shadow:0 -6px 20px rgba(0,0,0,0.25);overflow-y:auto;"></div>
+
+      <!-- প্রোফাইলের নিচে ডানদিকে ভাসমান স্যাটেলাইট বাটন -->
+      <button id="satBtn" onclick="toggleLayer()" style="position:absolute;top:64px;right:12px;z-index:500;width:40px;height:40px;border-radius:50%;padding:0;background:#e0f2fe;color:#0369a1;border:2px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,0.3);font-size:16px;">🛰️</button>
+
+      <!-- বামদিকে 3D মল ইন্টেরিয়র প্রিভিউ থাম্বনেইল -->
+      <div id="mall3dThumb" onclick="enter3DRoom(activeShop)" style="position:absolute;top:41%;left:12px;z-index:500;width:84px;height:56px;border-radius:12px;border:2.5px solid #fff;overflow:hidden;box-shadow:0 6px 15px rgba(0,0,0,0.45);cursor:pointer;background:#000;">
+        <img id="thumbImg" src="https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=400&q=80" style="width:100%;height:100%;object-fit:cover;">
+        <span style="position:absolute;bottom:2px;left:4px;background:rgba(0,0,0,0.75);color:#fde047;font-size:9px;padding:1px 5px;border-radius:6px;font-weight:800;">🔄 3D ভেতর</span>
+      </div>
+
+      <!-- নিচের সাদা কার্ডে মল ও ভেতরের দোকান লিস্ট -->
+      <div id="bottomSheet" style="position:absolute;bottom:0;left:0;right:0;height:45%;background:#fff;color:#0f172a;border-radius:22px 22px 0 0;padding:10px 14px;z-index:600;box-shadow:0 -6px 20px rgba(0,0,0,0.25);overflow-y:auto;"></div>
     </div>
 
     <div style="background:#0f172a;border:1.5px solid #38bdf8;border-radius:16px;padding:12px;margin-top:10px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <b style="color:#fde047;font-size:14px;">📒 Master Book • অষ্টাবক্র অটোপাইলট</b>
-        <span style="background:#16a34a;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:800;">AUTO-KHATA ON</span>
+        <span style="background:#16a34a;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:800;">3D MALL LIVE</span>
       </div>
       <div class="grid2">
-        <button onclick="openAutoKhata()" style="background:linear-gradient(135deg,#059669,#0284c7);">📒 অটো খাতা-বুক (বিক্রি ও বাকি)</button>
-        <button onclick="openOwnerCreator()" style="background:linear-gradient(135deg,#eab308,#ea580c);color:#000;">👑 দোকানদার: 3D ঘর খুলুন</button>
-        <button onclick="openAffiliateDrop()" style="background:linear-gradient(135deg,#ec4899,#7c3aed);">🔗 অ্যাফিলিয়েট লিংক ছাড়ুন</button>
-        <button onclick="openOpenDemand()" style="background:#334155;">🌍 যা খুশি অর্ডার (Open Radar)</button>
+        <button onclick="openAutoKhata()" style="background:linear-gradient(135deg,#059669,#0284c7);">📒 অটো খাতা + রিওয়ার্ড</button>
+        <button onclick="openOwnerCreator()" style="background:linear-gradient(135deg,#eab308,#ea580c);color:#000;">👑 3D দোকান খুলুন</button>
+        <button onclick="openAffiliateDrop()" style="background:linear-gradient(135deg,#ec4899,#7c3aed);">🔗 অ্যাফিলিয়েট লিংক</button>
+        <button onclick="loadRealNearbyShops()" style="background:#334155;">🏪 রিয়েল দোকান লোড</button>
       </div>
     </div>
   </div>
@@ -45,5 +59,7 @@
   <script src="auto_khata.js"></script>
   <script src="affiliate_paste.js"></script>
   <script src="gmail_auth.js"></script>
+  <script src="reverse_power.js"></script>
+  <script src="admin_autopilot.js"></script>
 </body>
 </html>
